@@ -1,13 +1,5 @@
-import NextAuth, { type DefaultSession } from 'next-auth'
+import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-
-declare module 'next-auth' {
-  interface Session {
-    user: {
-      id: string
-    } & DefaultSession['user']
-  }
-}
 
 const handler = NextAuth({
   providers: [
@@ -19,7 +11,10 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, token }) {
       if (session.user && token.sub) {
-        session.user.id = token.sub
+        session.user = {
+          ...session.user,
+          id: token.sub,
+        }
       }
       return session
     },
